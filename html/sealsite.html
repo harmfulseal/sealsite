@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (!sessionStorage.getItem('previewAccepted')) {
+          window.location.href = '/html/preview.html';
+        }
+      });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SEAL ON TOP</title>
+    <link rel="icon" href="/icons/site.ico" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+  body {
+    cursor: url('/cross%20purple.cur'), auto !important;
+    background: linear-gradient(135deg, #0a0a0a, #1a1a1a, #080808);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: #fff;
+    perspective: 1000px;
+  }
+
+  .container {
+    position: absolute;
+    width: 420px;
+    height: auto;
+    background: rgba(20, 20, 20, 0.97);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+    z-index: 10;
+    display: block;
+    overflow: visible;
+    border-radius: 0;
+    padding: 40px;
+    clip-path: none;
+    margin: auto;
+    cursor: url('/cross%20purple.cur'), auto !important;
+    left: calc(50% - 150px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+      /* Left Content Panel */
+      .content {
+        padding: 0;
+        display: block;
+        border-right: none;
+        overflow: visible;
+        border-radius: 0;
+        width: 100%;
+        max-width: 420px;
+      }
+
+      .branding {
+        margin-bottom: 40px;
+      }
+
+      .main-name {
+        font-size: 4.5rem;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1;
+        letter-spacing: -2px;
+        margin-bottom: 5px;
+      }
+
+      .discord-handle {
+        font-size: 1.3rem;
+        color: #aaa;
+        letter-spacing: 1px;
+        font-family: "Courier New", monospace;
+      }
+
+      /* View Counter */
+      .view-counter {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 0;
+        background: rgba(20, 20, 20, 0.97);
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: none;
+        width: fit-content;
+        box-shadow: none;
+      }
+
+      .eye-icon {
+        font-size: 1rem;
+        color: #aaa;
+      }
+
+      .view-text {
+        display: none;
+      }
+
+      .view-count {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ddd;
+        margin-left: 0;
+      }
+
+      /* Links Section */
+      .links-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      /* Remove underline from links */
+      .link-card,
+      .join-btn {
+        text-decoration: none;
+      }
+
+      .link-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 120px;
+      }
+
+      .link-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .link-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+        color: #ddd;
+      }
+
+      .link-text {
+        font-size: 0.95rem;
+        color: #aaa;
+        text-align: center;
+      }
+
+      .join-btn {
+        background: linear-gradient(90deg, #333, #555);
+        border: none;
+        color: white;
+        padding: 16px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: 1px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 10px auto 0 auto;
+        border-radius: 12px;
+        width: fit-content;
+        display: block;
+      }
+
+      .join-btn:hover {
+        background: linear-gradient(90deg, #444, #666);
+        transform: translateY(-3px);
+      }
+
+      /* Right Player Panel */
+      #music-player {
+        display: none;
+        position: fixed;
+        top: 10%;
+        right: 350px;
+        width: 300px;
+        background: rgba(20, 20, 20, 0.9);
+        padding: 10px;
+        border-radius: 8px;
+        color: white;
+        z-index: 40;
+      }
+    </style>
+    <style>
+      #tilt-container {
+        cursor: grab;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #tilt-container:active {
+        cursor: grabbing;
+      }
+    </style>
+  </head>
+    <body>
+      <video autoplay muted loop playsinline id="background-video" style="position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; object-fit: cover; z-index: -1;">
+        <source src="/background (1) (1).mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    <!-- Background elements -->
+    <div class="bg-element bg-1"></div>
+    <div class="bg-element bg-2"></div>
+
+    <!-- Floating particles -->
+    <style>
+      /* Hide the floating particles and background elements */
+      .particle, .bg-element {
+        display: none !important;
+      }
+    </style>
+
+    <div id="main-wrapper" style="display: flex; justify-content: center; align-items: center; height: 100vh; gap: 20px; position: relative;">
+
+      <img src="/images/3dgifmaker29753.gif" alt="3D Gif" style="width: 300px; height: 300px; object-fit: contain; position: fixed; top: 50%; left: 72%; transform: translate(-50%, -50%);" />
+
+      <div class="container" id="tilt-container" style="width: 420px; height: auto; background: rgba(20, 20, 20, 0.97); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0; padding: 40px; cursor: url('/cross%20purple.cur'), auto !important;">
+        <!-- Left Content Panel -->
+        <div class="content">
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="view-counter" title="Total Views" style="margin: 0;">
+              <div class="eye-icon">
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="view-count">0</div>
+            </div>
+          </div>
+
+      <button id="menu-button" style="padding: 0 12px; height: 36px; line-height: 36px; background: #a259ff; border: none; color: white; border-radius: 6px; cursor: pointer; align-self: center; position: fixed; top: 20px; right: 20px; z-index: 50;">
+        Menu
+      </button>
+
+          <div class="branding">
+            <div class="main-name">@seal</div>
+            <div class="discord-handle">dc/mostscaryharmfulhacker</div>
+          </div>
+
+          <div class="links-container">
+            <a
+              href="https://cracked.sh/HarmfulSeal"
+              class="link-card"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="link-icon">
+                <img
+                  src="/icons/cracked.ico"
+                  alt="Cracked.sh"
+                  style="width: 40px; height: 40px"
+                />
+              </div>
+              <div class="link-text">Cracked.sh</div>
+            </a>
+
+            <a
+              href="https://t.me/scaryseal"
+              class="link-card"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="link-icon">
+                <img
+                  src="/icons/telegram.ico"
+                  alt="Telegram"
+                  style="width: 40px; height: 40px"
+                />
+              </div>
+              <div class="link-text">Telegram</div>
+            </a>
+
+            <a
+              href="https://fartspam.com"
+              class="link-card"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="link-icon">
+                <img
+                  src="/icons/fartspam.ico"
+                  alt="Fartspam"
+                  style="width: 40px; height: 40px"
+                />
+              </div>
+              <div class="link-text">Fartspam</div>
+            </a>
+
+            <a
+              href="https://www.roblox.com/users/8799274253/profile"
+              class="link-card"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div class="link-icon">
+                <img
+                  src="/icons/roblox.ico"
+                  alt="Roblox"
+                  style="width: 40px; height: 40px"
+                />
+              </div>
+              <div class="link-text">Roblox</div>
+            </a>
+          </div>
+
+          <a
+            href="https://discord.gg/5MGqWGUPQJ"
+            class="join-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Join the Seal Bazaar</a
+          >
+        </div>
+      </div>
+
+
+
+    </div>
+
+      <div id="side-menu" style="position: fixed; top: 0; right: -300px; width: 300px; height: 100vh; background: rgba(30, 30, 30, 0.95); box-shadow: -5px 0 15px rgba(0,0,0,0.5); padding: 20px; overflow-y: auto; opacity: 0; pointer-events: none; transition: right 0.3s ease, opacity 0.3s ease; z-index: 40;">
+        <button id="music-toggle" style="padding: 8px 12px; background: #a259ff; border: none; color: white; border-radius: 6px; cursor: pointer; margin-bottom: 20px; position: absolute; top: 10px; left: 10px;">
+          Music
+        </button>
+      </div>
+
+      <div id="music-player" style="display: none; position: fixed; top: 10%; right: 375px; width: 300px; background: rgba(20, 20, 20, 0.9); padding: 10px; border-radius: 8px; color: white; z-index: 50;">
+        <button id="close-music-player" style="position: absolute; top: 5px; right: 5px; background: transparent; border: none; color: white; font-size: 1.2rem; cursor: pointer;">&times;</button>
+        <audio id="audio-player" src="" preload="metadata"></audio>
+        <div class="song-info" style="text-align: center; margin-bottom: 10px;">
+          <div id="song-title" style="font-weight: bold;">Title</div>
+          <div id="song-artist" style="font-size: 0.9em; color: #ccc;">Artist</div>
+        </div>
+        <div class="controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <button id="prev-btn" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2em;">&#9664;</button>
+          <button id="play-pause-btn" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2em;">
+            <i class="fas fa-play"></i>
+          </button>
+          <button id="next-btn" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2em;">&#9654;&#9654;</button>
+        </div>
+        <input type="range" id="progress-bar" value="0" min="0" max="100" style="width: 100%; margin-bottom: 10px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8em; color: #ccc; margin-bottom: 10px;">
+          <span id="current-time">00:00</span>
+          <span id="duration">00:00</span>
+        </div>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1" style="width: 100%;">
+      </div>
+
+
+      <script>
+      // Initialize view count from backend
+      async function updateViewCount() {
+        try {
+          // Increment count on backend first
+          let response = await fetch('/api/viewcount/increment', {
+            method: 'POST'
+          });
+          let data = await response.json();
+          let count = data.count;
+
+          // Display updated count
+          document.querySelector(".view-count").textContent =
+            new Intl.NumberFormat().format(count);
+        } catch (error) {
+          console.error('Error updating view count:', error);
+        }
+      }
+
+      updateViewCount();
+
+      // Play button functionality
+      const playBtn = document.getElementById("play-pause-btn");
+      const audioPlayer = document.getElementById("audio-player");
+      const progressBar = document.getElementById("progress-bar");
+      const progress = document.querySelector(".progress");
+      const currentTimeElem = document.getElementById("current-time");
+      const durationElem = document.getElementById("duration");
+      const volumeSlider = document.getElementById("volume-slider");
+
+      // Format time in mm:ss
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins.toString().padStart(2, "0")}:${secs
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      // Update progress bar and time
+      function updateProgress() {
+        const current = audioPlayer.currentTime;
+        const duration = audioPlayer.duration;
+        if (!isNaN(duration)) {
+          const percent = (current / duration) * 100;
+          progress.style.width = percent + "%";
+          currentTimeElem.textContent = formatTime(current);
+          durationElem.textContent = formatTime(duration);
+        }
+      }
+
+      // Play/pause toggle
+      playBtn.addEventListener("click", () => {
+        if (audioPlayer.paused) {
+          audioPlayer.play();
+          playBtn.querySelector("i").classList.remove("fa-play");
+          playBtn.querySelector("i").classList.add("fa-pause");
+        } else {
+          audioPlayer.pause();
+          playBtn.querySelector("i").classList.remove("fa-pause");
+          playBtn.querySelector("i").classList.add("fa-play");
+        }
+      });
+
+      // Update progress as audio plays
+      audioPlayer.addEventListener("timeupdate", updateProgress);
+
+      // Seek audio on progress bar click
+      progressBar.addEventListener("click", (e) => {
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        const duration = audioPlayer.duration;
+        if (!isNaN(duration)) {
+          audioPlayer.currentTime = (clickX / width) * duration;
+        }
+      });
+
+      // Volume control
+      volumeSlider.addEventListener("input", (e) => {
+        const volume = parseFloat(e.target.value);
+        audioPlayer.volume = volume;
+      });
+
+      // Initialize volume level
+      audioPlayer.volume = 0.5;
+      volumeSlider.value = 0.5;
+
+      // Auto play audio on page load
+      window.addEventListener('load', () => {
+        audioPlayer.volume = 0.5;
+
+        // Playlist of songs
+        const playlist = [
+          { src: '/audio/Fairfield - Fade Away.mp3', title: 'Fade Away', artist: 'Fairfield' },
+          { src: '/audio/Joeyy - Glitz.mp3', title: 'Glitz', artist: 'Joeyy' },
+          { src: '/audio/JOEYY - GOUT .mp3', title: 'GOUT', artist: 'JOEYY' },
+          { src: '/audio/Mortician - Rabid.mp3', title: 'Rabid', artist: 'Mortician' },
+          { src: '/audio/Smokedope2016 - GNARLY.mp3', title: 'GNARLY', artist: 'Smokedope2016' },
+          { src: '/audio/SMOKEDOPE2016 - IM NOT GOD BUT I WISH I WAS ft. JOEYY (prod. SIKA).mp3', title: 'IM NOT GOD BUT I WISH I WAS', artist: 'Smokedope2016 ft. JOEYY' },
+          { src: '/audio/Smokedope2016 - IN DA PARTY.mp3', title: 'IN DA PARTY', artist: 'Smokedope2016' },
+          { src: '/audio/Smokedope2016 - WHITE OWLS .mp3', title: 'WHITE OWLS', artist: 'Smokedope2016' }
+        ];
+
+        // Shuffle playlist
+        function shuffle(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+          return array;
+        }
+
+        const shuffledPlaylist = shuffle(playlist.slice());
+        let currentIndex = 0;
+
+        // Update song info display
+        function updateSongInfo(song) {
+          document.getElementById('song-title').textContent = song.title;
+          document.getElementById('song-artist').textContent = song.artist;
+        }
+
+        // Load and play current song
+        function loadSong(index) {
+          const song = shuffledPlaylist[index];
+          audioPlayer.src = song.src;
+          updateSongInfo(song);
+          audioPlayer.play().catch((e) => {
+            console.log('Autoplay prevented:', e);
+          });
+        }
+
+        // Play next song
+        function playNext() {
+          currentIndex = (currentIndex + 1) % shuffledPlaylist.length;
+          loadSong(currentIndex);
+        }
+
+        // Play previous song
+        function playPrevious() {
+          currentIndex = (currentIndex - 1 + shuffledPlaylist.length) % shuffledPlaylist.length;
+          loadSong(currentIndex);
+        }
+
+        // Event listeners for controls
+        document.getElementById('next-btn').addEventListener('click', playNext);
+        document.getElementById('prev-btn').addEventListener('click', playPrevious);
+
+        // Load first song
+        loadSong(currentIndex);
+
+        // Auto play next song when current ends
+        audioPlayer.addEventListener('ended', playNext);
+      });
+
+      // Join button animation
+      const joinBtn = document.querySelector(".join-btn");
+      joinBtn.addEventListener("click", () => {
+        joinBtn.textContent = "Joining...";
+        joinBtn.disabled = true;
+        setTimeout(() => {
+          joinBtn.textContent = "Access Granted!";
+          setTimeout(() => {
+            joinBtn.textContent = "Join Exclusive Community";
+            joinBtn.disabled = false;
+          }, 2000);
+        }, 1000);
+      });
+
+      // Tilt effect based on mouse position
+      const tiltContainer = document.getElementById("tilt-container");
+
+      // Set container to center of screen
+      tiltContainer.style.position = "absolute";
+      tiltContainer.style.left = "50%";
+      tiltContainer.style.top = "50%";
+      tiltContainer.style.transform = "translate(-50%, -50%)";
+
+      // Mouse move event listener for tilt effect
+      document.addEventListener("mousemove", (e) => {
+        // Get container dimensions and position
+        const rect = tiltContainer.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // Calculate mouse position relative to center
+        const mouseX = e.clientX - centerX;
+        const mouseY = e.clientY - centerY;
+
+        // Calculate rotation values (max 5 degrees)
+        const rotateY = (mouseX / rect.width) * 5;
+        const rotateX = -(mouseY / rect.height) * 5;
+
+        // Apply rotation with perspective
+        tiltContainer.style.transform = `translate(-50%, -50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+
+      // Reset rotation when mouse leaves container
+      tiltContainer.addEventListener("mouseleave", () => {
+        tiltContainer.style.transform =
+          "translate(-50%, -50%) rotateX(0) rotateY(0)";
+        tiltContainer.style.transition = "transform 0.5s ease";
+        setTimeout(() => {
+          tiltContainer.style.transition = "transform 0.1s ease-out";
+        }, 500);
+      });
+
+      // Create additional floating particles
+      for (let i = 0; i < 10; i++) {
+        const particle = document.createElement("div");
+        particle.classList.add("particle");
+
+        // Random size between 3px and 15px
+        const size = Math.floor(Math.random() * 12) + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+
+        // Random position
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+
+        // Random animation duration between 10s and 30s
+        const duration = Math.floor(Math.random() * 20) + 10;
+        particle.style.animationDuration = `${duration}s`;
+
+        // Random opacity
+        const opacity = Math.random() * 0.1 + 0.05;
+        particle.style.opacity = opacity;
+
+        document.body.appendChild(particle);
+      }
+      document.addEventListener('DOMContentLoaded', () => {
+        // Side menu toggle functionality
+        const menuButton = document.getElementById('menu-button');
+        const sideMenu = document.getElementById('side-menu');
+        menuButton.addEventListener('click', () => {
+          if (sideMenu.style.right === '0px') {
+            sideMenu.style.right = '-300px';
+            sideMenu.style.opacity = '0';
+            sideMenu.style.pointerEvents = 'none';
+          } else {
+            sideMenu.style.right = '0px';
+            sideMenu.style.opacity = '1';
+            sideMenu.style.pointerEvents = 'auto';
+          }
+        });
+
+        // Music player toggle functionality
+        const musicToggle = document.getElementById('music-toggle');
+        const musicPlayer = document.getElementById('music-player');
+        musicToggle.addEventListener('click', () => {
+          if (musicPlayer.style.display === 'none' || musicPlayer.style.display === '') {
+            musicPlayer.style.display = 'block';
+          } else {
+            musicPlayer.style.display = 'none';
+          }
+        });
+
+        // Close music player button functionality
+        const closeMusicPlayerBtn = document.getElementById('close-music-player');
+        closeMusicPlayerBtn.addEventListener('click', () => {
+          musicPlayer.style.display = 'none';
+        });
+      });
+      </script>
+    <style>
+      o-neko {
+        position: fixed;
+        width: 32px;
+        height: 32px;
+        pointer-events: none;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        background-repeat: no-repeat;
+        image-rendering: pixelated;
+      }
+    </style>
+    <script type="module" src="/oneko-element.js?define=o-neko"></script>
+    <o-neko></o-neko>
+  </body>
+</html>

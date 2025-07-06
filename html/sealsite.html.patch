@@ -1,0 +1,6 @@
+method: 'POST'
+          });
+=======
+          let response = await fetch('/api/viewcount/increment', {
+            method: 'POST'
+          });

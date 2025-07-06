@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preview - Click to Enter</title>
+  <style>
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #message {
+      font-size: 1.5rem;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <button id="fullPageButton" aria-label="Enter site" style="all: unset; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; cursor: pointer; display: flex; justify-content: center; align-items: center; background: transparent; color: #fff; font-size: 1.5rem; font-family: Arial, sans-serif;">
+    click to seal seal seal
+  </button>
+  <script>
+    const btn = document.getElementById('fullPageButton');
+    btn.addEventListener('click', () => {
+      // Set a flag in sessionStorage to indicate preview was accepted
+      sessionStorage.setItem('previewAccepted', 'true');
+      window.location.href = './sealsite.html';
+    });
+
+    // Removed previewAccepted flag removal on unload to prevent infinite loop
+  </script>
+</body>
+</html>
