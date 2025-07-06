@@ -366,17 +366,17 @@
 
 
       <script>
-      // Initialize view count from backend
+      // Initialize view count from Cloudflare Worker
+      const WORKER_BASE_URL = 'https://your-worker-subdomain.workers.dev';
+
       async function updateViewCount() {
         try {
-          // Increment count on backend first
-          let response = await fetch('/api/viewcount/increment', {
+          let response = await fetch(`${WORKER_BASE_URL}/api/viewcount/increment`, {
             method: 'POST'
           });
           let data = await response.json();
           let count = data.count;
 
-          // Display updated count
           document.querySelector(".view-count").textContent =
             new Intl.NumberFormat().format(count);
         } catch (error) {
